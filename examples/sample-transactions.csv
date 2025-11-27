@@ -1,0 +1,26 @@
+# 📊 Sample Transactions CSV
+
+# Sample data you can use to test your Kids Virtual Bank system
+# Import this into your Transactions sheet or use as reference
+
+Date,Kid,Type,Description,Amount
+2024-01-01,Martin,Deposit,Opening Balance,100.00
+2024-01-01,Daniel,Deposit,Opening Balance,50.00
+2024-01-08,Martin,Deposit,Weekly Allowance,10.00
+2024-01-08,Daniel,Deposit,Weekly Allowance,10.00
+2024-01-10,Martin,Deposit,Chore: Washed dishes,5.00
+2024-01-12,Daniel,Deposit,Chore: Cleaned room,7.50
+2024-01-14,Martin,Withdrawal,Ice cream,3.50
+2024-01-15,Martin,Deposit,Weekly Allowance,10.00
+2024-01-15,Daniel,Deposit,Weekly Allowance,10.00
+2024-01-16,Daniel,Withdrawal,Toy car,8.00
+2024-01-18,Martin,Deposit,Chore: Took out trash,2.50
+2024-01-20,Daniel,Deposit,Chore: Vacuumed,6.00
+2024-01-22,Martin,Deposit,Weekly Allowance,10.00
+2024-01-22,Daniel,Deposit,Weekly Allowance,10.00
+2024-01-23,Martin,Withdrawal,Book,12.00
+2024-01-25,Daniel,Deposit,Birthday gift from Grandma,25.00
+2024-01-27,Martin,Deposit,Chore: Helped with laundry,5.00
+2024-01-29,Martin,Deposit,Weekly Allowance,10.00
+2024-01-29,Daniel,Deposit,Weekly Allowance,10.00
+2024-01-30,Daniel,Withdrawal,Snacks,4.50
