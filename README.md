@@ -39,25 +39,41 @@ kids-virtual-bank/
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Google Account
-- Google Sheets
-- Google Forms
-- 5-10 minutes to set up
+### One-Click Setup (1 minute!)
+1. Create blank Google Spreadsheet
+2. Extensions → Apps Script
+3. Copy/paste `apps-script/CompleteSetup.gs`
+4. Run `setupEverything()`
+5. Answer prompts for kids' names
+6. **Done!** Get form URLs from popup
 
-### Installation Steps
+Everything is created automatically:
+- ✨ All sheets with formulas
+- ✨ 3 Google Forms (linked)
+- ✨ Automation triggers
+- ✨ Ready to use!
+
+---
+
+### Alternative: Modular Setup (5-10 minutes)
 
 1. **Create blank Google Sheet**
    - Go to [Google Sheets](https://sheets.google.com)
    - Create new blank spreadsheet
    - Name it "Kids Virtual Bank"
 
-2. **Run AutoSetup script (This does everything!)**
+2. **Run AutoSetup script**
    - Extensions → Apps Script
    - Copy/paste `apps-script/AutoSetup.gs`
    - Run `setupCompleteSystem()`
    - Enter number of kids and their names
    - ✨ All sheets, formulas, and structure created automatically!
+
+3. **Add automation scripts**
+   - Add `setupForms.gs` to Apps Script
+   - Run `createAllForms()`
+   - ✨ All 3 forms created and linked automatically!
+   - Alternative: Follow manual guides in `forms/` folder
 
 3. **Add automation scripts**
    - Add `Code.gs`, `forms.gs`, `chores.gs`, `triggers.gs`
