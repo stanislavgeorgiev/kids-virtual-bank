@@ -14,14 +14,18 @@ Get your Kids Virtual Bank running in **1 MINUTE** with a single script!
 2. Click **+ Blank**
 3. Name it: **"Kids Virtual Bank"**
 4. **Extensions** → **Apps Script**
-5. Copy ALL code from `/apps-script/CompleteSetup.gs`
-6. Paste into the editor
-7. Click **Save** (disk icon)
-8. Select **`setupEverything`** from dropdown
-9. Click **Run** (▶️)
-10. Authorize when prompted
-11. Answer prompts (number of kids, names)
-12. **Done!** Copy the 3 form URLs from the popup
+5. **IMPORTANT**: Add Google Sheets API:
+   - Click **Services** (+ icon on left sidebar)
+   - Find **Google Sheets API**
+   - Click **Add**
+6. Copy ALL code from `/apps-script/CompleteSetup.gs`
+7. Paste into the editor (replace any existing code)
+8. Click **Save** (disk icon)
+9. Select **`setupEverything`** from dropdown
+10. Click **Run** (▶️)
+11. Authorize when prompted
+12. Answer prompts (number of kids, names)
+13. **Done!** Copy the 3 form URLs from the popup
 
 ✅ **What just happened:**
 - All sheets created with formulas
@@ -339,6 +343,25 @@ Before you're done:
 - ✅ Test transaction posted successfully
 - ✅ Family members added to spreadsheet
 - ✅ Form URLs shared with family
+
+---
+
+
+## How to Add a New File in Apps Script
+
+If you want to add a new script file (for custom features, bug fixes, or splitting up code):
+
+1. In the Apps Script editor, click the **+** next to "Files" → **Script**.
+2. Enter a name (e.g., `myNewFeature`).
+3. Copy code from your local `/apps-script/myNewFeature.gs` (or write new code).
+4. Paste into the new file in the editor.
+5. Click **Save** (disk icon).
+
+**Tips:**
+- File names in Apps Script do not need the `.gs` extension (just use the base name).
+- You can have as many script files as you want; Apps Script will run them all together.
+- To delete a file, right-click its name in the Apps Script sidebar and select **Delete**.
+- If you update code locally, just copy-paste the changes into the corresponding Apps Script file.
 
 ---
 

@@ -10,8 +10,9 @@
  * 1. Create blank Google Spreadsheet
  * 2. Extensions → Apps Script
  * 3. Paste this ENTIRE file
- * 4. Run setupEverything()
- * 5. Done! ✨
+ * 4. Run testConnection() first to verify
+ * 5. Then run setupEverything()
+ * 6. Done! ✨
  */
 
 /**
@@ -94,6 +95,9 @@ function setupEverything() {
     // PART 2: Create forms
     const formUrls = createAllFormsInternal(kidNames);
     
+    // PART 2.5: Create Form Links reference sheet
+    createFormLinksSheet(formUrls);
+    
     // PART 3: Set up triggers
     createTriggersInternal();
     
@@ -133,23 +137,57 @@ function setupEverything() {
 function createAllSheets(kidNames) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   
-  // Delete default Sheet1 if it exists and is empty
-  const sheets = ss.getSheets();
-  if (sheets.length === 1 && sheets[0].getName() === 'Sheet1' && sheets[0].getLastRow() === 0) {
-    ss.deleteSheet(sheets[0]);
+  // First create Transactions sheet if it doesn't exist (ensures we always have at least one sheet)
+  if (!ss.getSheetByName('Transactions')) {
+    ss.insertSheet('Transactions', 0);
   }
   
-  // Create sheets in order
-  setupTransactionsSheet();
-  setupSummarySheet(kidNames);
+  // Now safe to delete old sheets
+  const oldSheets = ['Dashboard', 'Chores', 'Allowance Rules', 'Form Links', 'Summary'];
+  oldSheets.forEach(name => {
+    const sheet = ss.getSheetByName(name);
+    if (sheet) ss.deleteSheet(sheet);
+  });
+  
+  // Delete old ledger sheets
+  ss.getSheets().forEach(sheet => {
+    if (sheet.getName().endsWith(' Ledger')) {
+      ss.deleteSheet(sheet);
+    }
+  });
+  
+  // Delete old form response sheets
+  ss.getSheets().forEach(sheet => {
+    if (sheet.getName().startsWith('Form: ')) {
+      ss.deleteSheet(sheet);
+    }
+  });
+  
+  // Delete default Sheet1 if it exists
+  ss.getSheets().forEach(sheet => {
+    if (sheet.getName().match(/^Sheet\d+$/)) {
+      ss.deleteSheet(sheet);
+    }
+  });
+  
+  // Create/recreate all sheets in desired order
   setupDashboardSheet(kidNames);
   setupChoresSheet();
+  setupTransactionsSheet();
   setupAllowanceRulesSheet(kidNames);
   
   // Create individual kid ledgers
   for (let i = 0; i < kidNames.length; i++) {
     setupKidLedger(kidNames[i]);
   }
+  
+  // Delete default Sheet1 only if we have other sheets now
+  const sheets = ss.getSheets();
+  sheets.forEach(sheet => {
+    if (sheet.getName().match(/^Sheet\d+$/) && sheets.length > 1) {
+      ss.deleteSheet(sheet);
+    }
+  });
   
   // Add sample data
   addSampleData(kidNames);
@@ -236,7 +274,7 @@ function setupDashboardSheet(kidNames) {
   for (let i = 0; i < kidNames.length; i++) {
     const row = i + 4;
     sheet.getRange(row, 1).setValue(kidNames[i]);
-    sheet.getRange(row, 2).setFormula(`=VLOOKUP(A${row},Summary!A:B,2,FALSE)`);
+    sheet.getRange(row, 2).setFormula(`=SUMIF(Transactions!$B:$B,A${row},Transactions!$E:$E)`);
     sheet.getRange(row, 3).setFormula(`=QUERY(Transactions!A:B,"SELECT MAX(A) WHERE B='"&A${row}&"' LABEL MAX(A) ''",0)`);
   }
   
@@ -438,6 +476,12 @@ function createDepositForm(kidNames, spreadsheet) {
   
   form.setDestination(FormApp.DestinationType.SPREADSHEET, spreadsheet.getId());
   
+  // Rename the response sheet
+  Utilities.sleep(1000);
+  const sheets = spreadsheet.getSheets();
+  const responseSheet = sheets[sheets.length - 1];
+  responseSheet.setName('Form: Deposit');
+  
   return form;
 }
 
@@ -476,6 +520,12 @@ function createWithdrawalForm(kidNames, spreadsheet) {
   form.setConfirmationMessage('✅ Withdrawal requested! Check your ledger in a few minutes.');
   
   form.setDestination(FormApp.DestinationType.SPREADSHEET, spreadsheet.getId());
+  
+  // Rename the response sheet
+  Utilities.sleep(1000);
+  const sheets = spreadsheet.getSheets();
+  const responseSheet = sheets[sheets.length - 1];
+  responseSheet.setName('Form: Withdrawal');
   
   return form;
 }
@@ -518,12 +568,7 @@ function createChoresForm(kidNames, spreadsheet) {
   
   const notesQuestion = form.addParagraphTextItem();
   notesQuestion.setTitle('Notes (Optional)')
-    .setHelpText('Add any details about the chore, or upload a photo in the next question')
-    .setRequired(false);
-  
-  const photoQuestion = form.addFileUploadItem();
-  photoQuestion.setTitle('Photo of completed chore (Optional)')
-    .setHelpText('Take a photo to show your work! (Optional but helps with approval)')
+    .setHelpText('Add any details about the chore')
     .setRequired(false);
   
   form.setAcceptingResponses(true);
@@ -533,7 +578,74 @@ function createChoresForm(kidNames, spreadsheet) {
   
   form.setDestination(FormApp.DestinationType.SPREADSHEET, spreadsheet.getId());
   
+  // Rename the response sheet
+  Utilities.sleep(1000);
+  const sheets = spreadsheet.getSheets();
+  const responseSheet = sheets[sheets.length - 1];
+  responseSheet.setName('Form: Chores');
+  
   return form;
+}
+
+/**
+ * Create Form Links reference sheet
+ */
+function createFormLinksSheet(formUrls) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName('Form Links');
+  
+  if (!sheet) {
+    sheet = ss.insertSheet('Form Links');
+  }
+  
+  sheet.clear();
+  
+  // Title
+  sheet.getRange('A1').setValue('📋 Form Links - Share These!');
+  sheet.getRange('A1').setFontSize(16).setFontWeight('bold').setBackground('#4285f4').setFontColor('#ffffff');
+  sheet.setRowHeight(1, 40);
+  sheet.getRange('A1:B1').merge();
+  
+  // Headers
+  sheet.getRange('A3:B3').setValues([['Form Name', 'URL']]);
+  sheet.getRange('A3:B3').setFontWeight('bold').setBackground('#34a853').setFontColor('#ffffff');
+  
+  // Form links
+  const data = [
+    ['💰 Deposit Form (for parents)', formUrls.deposit],
+    ['💸 Withdrawal Form (for kids)', formUrls.withdrawal],
+    ['🧹 Chores Form (for kids)', formUrls.chores]
+  ];
+  
+  sheet.getRange(4, 1, data.length, 2).setValues(data);
+  
+  // Format URLs as hyperlinks and make them blue
+  for (let i = 0; i < data.length; i++) {
+    const cell = sheet.getRange(4 + i, 2);
+    cell.setFontColor('#1155cc');
+    cell.setFontWeight('normal');
+  }
+  
+  // Column widths
+  sheet.setColumnWidth(1, 250);
+  sheet.setColumnWidth(2, 450);
+  
+  // Instructions
+  sheet.getRange('A7').setValue('📖 Instructions:');
+  sheet.getRange('A7').setFontWeight('bold').setFontSize(12);
+  
+  const instructions = [
+    ['1. Click any URL above to open the form'],
+    ['2. Copy the URL and share with your family'],
+    ['3. Or create shortcuts on phones/tablets'],
+    ['4. Forms automatically update the spreadsheet every 5 minutes'],
+    ['5. Parents approve chores in the Chores sheet']
+  ];
+  
+  sheet.getRange(8, 1, instructions.length, 1).setValues(instructions);
+  sheet.getRange('A8:A12').setWrap(true);
+  
+  Logger.log('Form Links sheet created');
 }
 
 // ============================================================================
@@ -565,7 +677,7 @@ function createTriggersInternal() {
   
   ScriptApp.newTrigger('weeklyAllowance')
     .timeBased()
-    .onWeekDay(ScriptApp.WeekDay.MONDAY)
+    .onWeekDay(ScriptApp.WeekDay.FRIDAY)
     .atHour(8)
     .create();
   

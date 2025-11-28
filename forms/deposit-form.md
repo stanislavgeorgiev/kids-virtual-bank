@@ -54,7 +54,7 @@ See [SETUP.md](../SETUP.md) for details.
 - **Type**: Short answer
 - **Question**: "What is this deposit for?"
 - **Description**: "e.g., Birthday gift, Extra chore, Bonus"
-- **Required**: Yes
+- **Required**: No
 
 ---
 

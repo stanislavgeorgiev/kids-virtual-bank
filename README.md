@@ -69,28 +69,27 @@ Everything is created automatically:
    - Enter number of kids and their names
    - ✨ All sheets, formulas, and structure created automatically!
 
-3. **Add automation scripts**
-   - Add `setupForms.gs` to Apps Script
+3. **Create forms automatically**
+   - Add `setupForms.gs` to Apps Script (new script file)
    - Run `createAllForms()`
    - ✨ All 3 forms created and linked automatically!
-   - Alternative: Follow manual guides in `forms/` folder
 
-3. **Add automation scripts**
-   - Add `Code.gs`, `forms.gs`, `chores.gs`, `triggers.gs`
+4. **Add automation scripts**
+   - Add `Code.gs`, `forms.gs`, `chores.gs`, `triggers.gs` (4 new script files)
    - Run `createTriggers()` to enable automation
 
-4. **Create Google Forms (Automatic!)**
-   - Add `setupForms.gs` to Apps Script
-   - Run `createAllForms()`
-   - ✨ All 3 forms created and linked automatically!
-   - Alternative: Follow manual guides in `forms/` folder
-
-5. **Done!**
-   - Test with `runAllNow()`
-   - Submit test forms
-   - Start using with your family!
+**Done!** Test with `runAllNow()` and start using with your family.
 
 For detailed instructions, see [SETUP.md](./SETUP.md)
+
+#### How to add a new file in Apps Script
+
+1. In the Apps Script editor, click the **+** button next to "Files" in the left sidebar.
+2. Select **Script** to add a new `.gs` file, or **HTML** for a `.html` file.
+3. Enter a name for your new file (e.g., `forms.gs`).
+4. Paste the code you want into the new file and click **Save** (disk icon).
+
+You can add as many script files as you need for modular organization. Each file can contain one or more functions.
 
 ## 💡 How It Works
 
